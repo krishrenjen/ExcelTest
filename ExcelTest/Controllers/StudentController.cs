@@ -22,7 +22,7 @@ namespace ExcelTest.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadExcel(IFormFile file)
+        public async Task<IActionResult> UploadExcel(IFormFile file, [FromQuery] bool replaceAll = false)
         {
 
             if (file == null || file.Length == 0)
@@ -64,6 +64,11 @@ namespace ExcelTest.Controllers
                     Email = row["Email"].ToString(),
                     GraduationYear = Convert.ToInt32(row["GraduationYear"])
                 }).ToList();
+
+                if (replaceAll)
+                {
+                    _context.Students.RemoveRange(_context.Students);
+                }
 
                 _context.Students.AddRange(students);
                 await _context.SaveChangesAsync();
